@@ -15,5 +15,7 @@
   - utilizando KNN com k = 3.
 
 <https://scikit-image.org/docs/0.7.0/api/skimage.feature.texture.html>
+
 <https://scikit-learn.org/stable/modules/neighbors.html>
+
 <https://scikit-image.org/docs/dev/api/skimage.exposure.html#skimage.exposure.histogram>
