@@ -1,3 +1,4 @@
 frutas_dataset_train
 .ipynb_checkpoints
 *.pkl
+*.joblib

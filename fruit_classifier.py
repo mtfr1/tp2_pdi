@@ -47,17 +47,18 @@ def find_files(MAIN_DIR):
 	for i in range(len(y)):
 	    for j in range(num_files[i]):
 	        k.append(encoded[i])
-	return result, num_files, k
+	return result, num_files, k, y, encoded
 
 MAIN_DIR = "frutas_dataset_train"
 
-result, num_files, k = find_files(MAIN_DIR)
+result, num_files, k, y, encoded = find_files(MAIN_DIR)
 
 def calcula_histograma_lbp(image):
 	#image, vizinhança, raio do circulo, metodo
 	lbp = feature.texture.local_binary_pattern(image, 8, 2, method='uniform')
 	histogram = scipy.stats.itemfreq(lbp)
 	x = histogram[:,1]
+	norm_hist = normalize(x[:,np.newaxis], axis=0).ravel()
 	return x
 
 def calcula_histograma_cor(image):
@@ -70,22 +71,33 @@ def calcula_histograma_cor(image):
 
 def calcula_haralick_features(image):
 	x = []
-	f = feature.texture.greycomatrix(image, [1], [0, np.pi/2])
-	arr = feature.texture.greycoprops(f, prop = 'contrast').ravel()
-	x.append(arr[0])
-	x.append(arr[1])
-	arr = (feature.texture.greycoprops(f, prop = 'dissimilarity').ravel())
-	x.append(arr[0])
-	x.append(arr[1])
-	arr = (feature.texture.greycoprops(f, prop = 'homogeneity').ravel())
-	x.append(arr[0])
-	x.append(arr[1])
-	arr = (feature.texture.greycoprops(f, prop = 'ASM').ravel())
-	x.append(arr[0])
-	x.append(arr[1])
-	arr = (feature.texture.greycoprops(f, prop = 'energy').ravel())
-	x.append(arr[0])
-	x.append(arr[1])
+	
+	f = feature.texture.greycomatrix(im, [1,2], [0,  np.pi/2], 256, symmetric=True, normed=True)
+    x.append(feature.texture.greycoprops(f, prop = 'contrast')[0,0])
+    x.append(feature.texture.greycoprops(f, prop = 'contrast')[0,1])
+    x.append(feature.texture.greycoprops(f, prop = 'contrast')[1,0])
+    x.append(feature.texture.greycoprops(f, prop = 'contrast')[1,1])
+    
+    x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[0,0])
+    x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[0,1])
+    x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[1,0])
+    x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[1,1])
+    
+    x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[0,0])
+    x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[0,1])
+    x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[1,0])
+    x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[1,1])
+
+    x.append(feature.texture.greycoprops(f, prop = 'ASM')[0,0])
+    x.append(feature.texture.greycoprops(f, prop = 'ASM')[0,1])
+    x.append(feature.texture.greycoprops(f, prop = 'ASM')[1,0])
+    x.append(feature.texture.greycoprops(f, prop = 'ASM')[1,1])
+
+    x.append(feature.texture.greycoprops(f, prop = 'energy')[0,0])
+    x.append(feature.texture.greycoprops(f, prop = 'energy')[0,1])
+    x.append(feature.texture.greycoprops(f, prop = 'energy')[1,0])
+    x.append(feature.texture.greycoprops(f, prop = 'energy')[1,1])
+
 	return x
 
 # X_lbp = np.zeros((len(result), 10))
@@ -100,7 +112,7 @@ def calcula_haralick_features(image):
 #     x = calcula_histograma_cor(im)
 #     X_hist[i,:] = x
 
-# X_har = np.zeros((len(result), 10))
+# X_har = np.zeros((len(result), 20))
 # for i in range(len(result)):
 # 	im = skimage.img_as_ubyte(color.rgb2gray(io.imread(result[i])))
 # 	x = calcula_haralick_features(im)
@@ -118,7 +130,7 @@ X_har = read_matrix("extracted_features/x_har.txt")
 from sklearn.model_selection import train_test_split
 
 def treinar_knn(X, k):
-	X_train, X_test, k_train, k_test = train_test_split(X_hist, k, test_size=0.5)
+	X_train, X_test, k_train, k_test = train_test_split(X, k, test_size=0.5)
 	knn = KNeighborsClassifier(n_neighbors=3)
 	knn.fit(X_train, k_train)
 	return knn
@@ -129,12 +141,10 @@ knn_har = treinar_knn(X_har, k)
 
 from sklearn.externals import joblib
 
-joblib.dump(knn_lbp, 'knn_lbp.joblib.pkl')
-joblib.dump(knn_hist, 'knn_hist.joblib.pkl')
-joblib.dump(knn_har, 'knn_har.joblib.pkl')
+joblib.dump(knn_lbp, 'knn_lbp.joblib')
+joblib.dump(knn_hist, 'knn_hist.joblib')
+joblib.dump(knn_har, 'knn_har.joblib')
 
-
-#para ler
-# knn_lbp = joblib.load('knn_lbp.joblib.pkl')
-# knn_hist = joblib.load('knn_hist.joblib.pkl')
-# knn_har = joblib.load('knn_har.joblib.pkl')
+knn_lbp = joblib.load('knn_lbp.joblib')
+knn_hist = joblib.load('knn_hist.joblib')
+knn_har = joblib.load('knn_har.joblib')
