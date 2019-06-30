@@ -94,8 +94,6 @@ def classify_har(image, encoded, y):
 if __name__ == "__main__":
     image = sys.argv[1]
     tecnica = sys.argv[2]
-
-    # print(tecnica)
     	
     MAIN_DIR = "../frutas_dataset_train"
     y = [name for name in os.listdir(MAIN_DIR) if os.path.isdir(os.path.join(MAIN_DIR, name))]

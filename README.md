@@ -14,6 +14,14 @@
   - taxa de acerto de aproximadamente 60%.
   - utilizando KNN com k = 3.
 
+## Interface Web
+- Rodando em PHP7.2
+- Instruções de uso
+	- Clone o repositório na pasta /var/www/html
+	- Na pasta /var/www/html rode sudo chmod go+rwx /tp2_pdi
+	- É necessário que o dataset esteja na pasta raiz (tp2_pdi)
+	- Rode o script fruit_classifier.py. 
+
 <https://scikit-image.org/docs/0.7.0/api/skimage.feature.texture.html>
 
 <https://scikit-learn.org/stable/modules/neighbors.html>

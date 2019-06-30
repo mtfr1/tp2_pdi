@@ -10,7 +10,7 @@ if(isset($_POST['submit'])){
 	$file = $_FILES['image'];
 	$imageName = $file['name'];
 	$imageTmp = $file['tmp_name'];
-	$scriptFile = "script.py";
+	$scriptFile = "script_web.py";
 	
 	$imageExt = explode('.', $imageName);
 	$imageActualExt = strtolower(end($imageExt));

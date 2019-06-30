@@ -5,7 +5,7 @@ if(isset($_POST['submit'])){
     $image = $_POST['image'];
     $tecnica = $_POST['tecnica'];
 
-    $scriptFile = "script.py";
+    $scriptFile = "script_web.py"; 
 	
 	exec("python3 ".$scriptFile." ".$image." ".$tecnica." > result.txt 2>&1 &", $output);
 	sleep(3);
