@@ -16,15 +16,6 @@ from sklearn import preprocessing
 import warnings
 warnings.filterwarnings('ignore')
 
-#funcao basica para mostrar imagens
-def show(img):
-    fig, ax = plt.subplots(1, 1, figsize=(8, 8))
-    ax.imshow(img, cmap=plt.cm.gray)
-    ax.set_axis_off()
-    plt.show()
-
-
-
 #retorna um vetor com o path para todos os arquivos, outro vetor com o numero de arquivos dentro de cada classe
 #e o vetor target k, o vetor de classes y, e o y transformado em int = encoded
 def find_files(MAIN_DIR):
@@ -137,17 +128,14 @@ def treinar_knn(X, k):
 	knn = KNeighborsClassifier(n_neighbors=3)
 	knn.fit(X_train, k_train)
 	return knn
-
+	
+k = np.genfromtxt('extracted_features/k.txt', delimiter=';')
 knn_lbp = treinar_knn(X_lbp, k)
 knn_hist = treinar_knn(X_hist, k)
 knn_har = treinar_knn(X_har, k)
 
 from sklearn.externals import joblib
 
-joblib.dump(knn_lbp, 'knn_lbp.joblib')
-joblib.dump(knn_hist, 'knn_hist.joblib')
-joblib.dump(knn_har, 'knn_har.joblib')
-
-# knn_lbp = joblib.load('knn_lbp.joblib')
-# knn_hist = joblib.load('knn_hist.joblib')
-# knn_har = joblib.load('knn_har.joblib')
+joblib.dump(knn_lbp, 'extracted_features/knn_lbp.joblib')
+joblib.dump(knn_hist, 'extracted_features/knn_hist.joblib')
+joblib.dump(knn_har, 'extracted_features/knn_har.joblib')
