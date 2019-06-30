@@ -2,5 +2,5 @@ frutas_dataset_train
 .ipynb_checkpoints
 *.pkl
 *.joblib
-uploaded_images/*
+website/uploaded_images/*
 frutas_dataset_test
