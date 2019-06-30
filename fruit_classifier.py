@@ -26,7 +26,7 @@ def show(img):
 
 
 #retorna um vetor com o path para todos os arquivos, outro vetor com o numero de arquivos dentro de cada classe
-#e o vetor target k
+#e o vetor target k, o vetor de classes y, e o y transformado em int = encoded
 def find_files(MAIN_DIR):
 	#path_to_files
 	y = [name for name in os.listdir(MAIN_DIR) if os.path.isdir(os.path.join(MAIN_DIR, name))]
@@ -52,6 +52,7 @@ def find_files(MAIN_DIR):
 MAIN_DIR = "frutas_dataset_train"
 
 result, num_files, k, y, encoded = find_files(MAIN_DIR)
+np.savetxt("extracted_features/k.txt", k, delimiter=';')
 
 def calcula_histograma_lbp(image):
 	#image, vizinhança, raio do circulo, metodo
@@ -71,53 +72,55 @@ def calcula_histograma_cor(image):
 
 def calcula_haralick_features(image):
 	x = []
-	
-	f = feature.texture.greycomatrix(im, [1,2], [0,  np.pi/2], 256, symmetric=True, normed=True)
-    x.append(feature.texture.greycoprops(f, prop = 'contrast')[0,0])
-    x.append(feature.texture.greycoprops(f, prop = 'contrast')[0,1])
-    x.append(feature.texture.greycoprops(f, prop = 'contrast')[1,0])
-    x.append(feature.texture.greycoprops(f, prop = 'contrast')[1,1])
-    
-    x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[0,0])
-    x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[0,1])
-    x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[1,0])
-    x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[1,1])
-    
-    x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[0,0])
-    x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[0,1])
-    x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[1,0])
-    x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[1,1])
 
-    x.append(feature.texture.greycoprops(f, prop = 'ASM')[0,0])
-    x.append(feature.texture.greycoprops(f, prop = 'ASM')[0,1])
-    x.append(feature.texture.greycoprops(f, prop = 'ASM')[1,0])
-    x.append(feature.texture.greycoprops(f, prop = 'ASM')[1,1])
+	f = feature.texture.greycomatrix(image, [1,2], [0,  np.pi/2], 256, symmetric=True, normed=True)
+	x.append(feature.texture.greycoprops(f, prop = 'contrast')[0,0])
+	x.append(feature.texture.greycoprops(f, prop = 'contrast')[0,1])
+	x.append(feature.texture.greycoprops(f, prop = 'contrast')[1,0])
+	x.append(feature.texture.greycoprops(f, prop = 'contrast')[1,1])
 
-    x.append(feature.texture.greycoprops(f, prop = 'energy')[0,0])
-    x.append(feature.texture.greycoprops(f, prop = 'energy')[0,1])
-    x.append(feature.texture.greycoprops(f, prop = 'energy')[1,0])
-    x.append(feature.texture.greycoprops(f, prop = 'energy')[1,1])
+	x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[0,0])
+	x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[0,1])
+	x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[1,0])
+	x.append(feature.texture.greycoprops(f, prop = 'dissimilarity')[1,1])
+
+	x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[0,0])
+	x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[0,1])
+	x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[1,0])
+	x.append(feature.texture.greycoprops(f, prop = 'homogeneity')[1,1])
+
+	x.append(feature.texture.greycoprops(f, prop = 'ASM')[0,0])
+	x.append(feature.texture.greycoprops(f, prop = 'ASM')[0,1])
+	x.append(feature.texture.greycoprops(f, prop = 'ASM')[1,0])
+	x.append(feature.texture.greycoprops(f, prop = 'ASM')[1,1])
+
+	x.append(feature.texture.greycoprops(f, prop = 'energy')[0,0])
+	x.append(feature.texture.greycoprops(f, prop = 'energy')[0,1])
+	x.append(feature.texture.greycoprops(f, prop = 'energy')[1,0])
+	x.append(feature.texture.greycoprops(f, prop = 'energy')[1,1])
 
 	return x
 
 # X_lbp = np.zeros((len(result), 10))
 # for i in range(len(result)):
 #     im = color.rgb2gray(io.imread(result[i]))
-#     x = calcula_histograma_lbp
-#     X[i,:] = x
+#     x = calcula_histograma_lbp(im)
+#     X_lbp[i,:] = x
+# np.savetxt("extracted_features/x_lbp.txt", X_lbp, delimiter=';')
 
 # X_hist = np.zeros((len(result), 768))
 # for i in range(len(result)):
 #     im = skimage.img_as_float(io.imread(result[i]))
 #     x = calcula_histograma_cor(im)
 #     X_hist[i,:] = x
+# np.savetxt("extracted_features/x_hist.txt", X_hist, delimiter=';')
 
 # X_har = np.zeros((len(result), 20))
 # for i in range(len(result)):
 # 	im = skimage.img_as_ubyte(color.rgb2gray(io.imread(result[i])))
 # 	x = calcula_haralick_features(im)
 # 	X_har[i,:] = x
-
+# np.savetxt("extracted_features/x_har.txt", X_har, delimiter=';')
 
 def read_matrix(PATH):
 	X = np.genfromtxt(PATH, delimiter=';')
@@ -145,6 +148,6 @@ joblib.dump(knn_lbp, 'knn_lbp.joblib')
 joblib.dump(knn_hist, 'knn_hist.joblib')
 joblib.dump(knn_har, 'knn_har.joblib')
 
-knn_lbp = joblib.load('knn_lbp.joblib')
-knn_hist = joblib.load('knn_hist.joblib')
-knn_har = joblib.load('knn_har.joblib')
+# knn_lbp = joblib.load('knn_lbp.joblib')
+# knn_hist = joblib.load('knn_hist.joblib')
+# knn_har = joblib.load('knn_har.joblib')
